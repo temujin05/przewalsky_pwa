@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="hu" x-data="app()" x-init="init()">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}PWA Táblázat{% endblock %}</title>
+  
+  <!-- PWA manifest -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0d6efd">
+
+  <!-- Tabulator CSS -->
+  <link href="https://unpkg.com/tabulator-tables@5.6.2/dist/css/tabulator.min.css" rel="stylesheet">
+  
+  <!-- Alpine.js -->
+  <script src="https://unpkg.com/alpinejs" defer></script>
+  
+  <!-- Tabulator JS -->
+  <script src="https://unpkg.com/tabulator-tables@5.6.2/dist/js/tabulator.min.js"></script>
+
+  <style>
+    #table { margin: 1rem; }
+  </style>
+</head>
+<body>
+  <h1 class="text-xl font-bold m-2">API Táblázat</h1>
+  <div id="table"></div>
+
+  <script>
+    function app() {
+      return {
+        table: null,
+        init() {
+          fetch("https://api.example.com/data")  // <-- API URL ide
+            .then(res => res.json())
+            .then(data => {
+              // ha vannak adatok, generáljunk oszlopdefiníciót a kulcsokból
+              let columns = Object.keys(data[0]).map(key => ({
+                title: key.toUpperCase(),
+                field: key,
+                sorter: "string"
+              }));
+
+              this.table = new Tabulator("#table", {
+                data: data,
+                columns: columns,
+                layout: "fitDataStretch",
+                pagination: "local",
+                paginationSize: 20,
+              });
+            });
+        }
+      }
+    }
+  </script>
+
+  <!-- Service Worker regisztráció -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js");
+    }
+  </script>
+</body>
+</html>
+
