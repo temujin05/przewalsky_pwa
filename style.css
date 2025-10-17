@@ -13,9 +13,9 @@ li {
 }
 
 ul.scrolling {
-    line-height: 28px;
-    height: 250px;
-    width: 250px;
+    line-height: 10px;
+    height: 5px;
+    width: 5px;
     overflow: auto;
     padding: 0;
     margin: 0;
@@ -27,8 +27,12 @@ ul.scrolling {
     width: 240px;
     padding: 6px;
     margin-bottom: 10px;
-    border: 2px solid blue;
+    border: 2px solid green;
     border-radius: 6px;
     font-size: 18px;
     font-family: inherit;
+}
+
+#table .tabulator-row {
+    cursor: pointer;
 }
