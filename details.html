@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Horse Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        h2 {
+            color: #0d6efd;
+            margin-bottom: 15px;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="details"></div>
+
+    <script>
+        (async() => {
+                const detailsDiv = document.getElementById("details");
+
+                // Get horse name from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const horseName = urlParams.get("name");
+
+                if (!horseName) {
+                    detailsDiv.innerHTML = "<p>No horse selected.</p>";
+                    return;
+                }
+
+                try {
+                    // Fetch harem JSON
+                    const response = await fetch("./harem.json");
+                    const haremData = await response.json();
+
+                    // Find the stallion entry whose harem includes this horse
+                    const stallionEntry = haremData.find(entry => entry.harem_members.includes(horseName));
+
+                    if (!stallionEntry) {
+                        detailsDiv.innerHTML = `<p>No stallion found for ${horseName}.</p>`;
+                        return;
+                    }
+
+                    // Build table for stallion info
+                    detailsDiv.innerHTML = `
+                <h2>Stallion Information</h2>
+
+                <button onClick = "listFiles()">
+
+                    List
+                    
+                </button>
+                <table>
+                    <tr>
+                        <th>Field</th>
+                        <th>Value</th>
+                    </tr>
+                    <tr>
+                        <td>Stallion</td>
+                        <td>${stallionEntry.stallion}</td>
+                    </tr>
+                    <tr>
+                        <td>Latest Date</td>
+                        <td>${stallionEntry.latest_date}</td>
+                    </tr>
+                    <tr>
+                        <td>Harem Members</td>
+                        <td><ul>${stallionEntry.harem_members.map(member => `<li>${member}</li>`).join('')}</ul></td>
+                    </tr>
+                    <tr>
+                        <td>All Dates</td>
+                        <td><ul>${stallionEntry.all_dates.map(date => `<li>${date}</li>`).join('')}</ul></td>
+                    </tr>
+                </table>
+            `;
+
+        } catch (err) {
+            console.error(err);
+            detailsDiv.innerHTML = `<p>Error loading stallion details: ${err.message}</p>`;
+        }
+    })();
+    </script>
+
+    <script>
+        const baseUrl = "https://nextcloud.hnp.hu/s/kdZn2kYi65TetHg"
+        const username = "przewalski_pwa"
+        const password = "pP2sP-QXPQg-WMAgg-JP7DC-zpYc2"
+
+        async function listFiles(folderPath = "/Katalógus - fotók/") {
+            const url = `${baseUrl}/remote.php/dav/files/${username}${folderPath}`;
+
+            const response = await fetch(url, {
+                method: "PROPFIND",
+                headers: {
+                    "Authorization": "Basic " + btoa(`${username}:${password}`),
+                    "Depth": "1"
+                }
+            });
+
+            const text = await response.text();
+            console.log(text); // XML response
+
+            // You can parse it with DOMParser to extract file names
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(text, "application/xml");
+            const hrefs = xmlDoc.querySelectorAll("d\\:response d\\:href");
+
+            hrefs.forEach(h => console.log("File:", h.textContent));
+        }
+    </script>
+</body>
+
+</html>
