@@ -52,21 +52,27 @@
         <h3>Names</h3>
         <input type="text" id="searchInput" placeholder="Search names..." style="width:100%; padding:8px; margin-bottom:10px;">
         <ul id="nameList" style="max-height:50px; overflow-y:auto; border:2px solid #ccc; padding:5px; list-style:none;">
-            <!-- Names will be dynamically inserted here -->
         </ul>
 
         <script>
-            fetch("data.json")
+            // Original API
+            const apiUrl = "https://vadlo.ebiok.science.unideb.hu/active_names";
+
+            // Use AllOrigins proxy to bypass CORS
+            const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(apiUrl);
+
+            fetch(proxyUrl)
                 .then(res => res.json())
                 .then(data => {
+                    console.log("Fetched data:", data); // check structure
                     const nameList = document.getElementById("nameList");
 
                     data.forEach(item => {
                         const li = document.createElement("li");
-                        li.textContent = item.name;
+                        // Adjust this if the property name is different
+                        const name = item.name || item.stallion || item.horse_name || JSON.stringify(item);
                         li.style.padding = "5px 0";
-                        // Optional: make names clickable
-                        li.innerHTML = `<a href="details.html?name=${encodeURIComponent(item.name)}">${item.name}</a>`;
+                        li.innerHTML = `<a href="details.html?name=${encodeURIComponent(name)}">${name}</a>`;
                         nameList.appendChild(li);
                     });
                 })
@@ -86,6 +92,42 @@
     </section>
 
 
+    <!-- <section id="search" class="section py-5">
+        <h3>Names</h3>
+        <input type="text" id="searchInput" placeholder="Search names..." style="width:100%; padding:8px; margin-bottom:10px;">
+        <ul id="nameList" style="max-height:50px; overflow-y:auto; border:2px solid #ccc; padding:5px; list-style:none;">
+        </ul>
+
+        <script>
+            fetch("data.json")
+                .then(res => res.json())
+                .then(data => {
+                    const nameList = document.getElementById("nameList");
+
+                    data.forEach(item => {
+                        const li = document.createElement("li");
+                        li.textContent = item.name;
+                        li.style.padding = "5px 0";
+                        li.innerHTML = `<a href="details.html?name=${encodeURIComponent(item.name)}">${item.name}</a>`;
+                        nameList.appendChild(li);
+                    });
+                })
+                .catch(err => console.error("Failed to load names:", err));
+
+            const searchInput = document.getElementById("searchInput");
+            searchInput.addEventListener("keyup", function() {
+                const filter = searchInput.value.toLowerCase();
+                const items = document.getElementById("nameList").getElementsByTagName("li");
+
+                for (let i = 0; i < items.length; i++) {
+                    const text = items[i].textContent || items[i].innerText;
+                    items[i].style.display = text.toLowerCase().includes(filter) ? "" : "none";
+                }
+            });
+        </script>
+        </section>
+
+    -->
 
     <!-- original code 
      <script>
