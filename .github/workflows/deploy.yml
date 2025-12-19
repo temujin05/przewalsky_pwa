@@ -3,7 +3,7 @@ name: Deploy to server
 on:
   push:
     branches:
-      - main
+      - main   # Only main branch after commit
 
 jobs:
   deploy:
@@ -28,27 +28,9 @@ jobs:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
-          set -e   # 🔴 fail immediately on any error
-
-          # --- sanity checks (clear error messages) ---
-          : "${DEPLOY_USER:?Missing DEPLOY_USER}"
-          : "${DEPLOY_HOST:?Missing DEPLOY_HOST}"
-          : "${DEPLOY_PATH:?Missing DEPLOY_PATH}"
-
-          # --- SSH setup ---
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-
-          # avoid host key prompts in CI
-          echo -e "Host *\n  StrictHostKeyChecking no" >> ~/.ssh/config
-
-          # --- verify SSH works before rsync ---
-          ssh -i ~/.ssh/id_ed25519 ${DEPLOY_USER}@${DEPLOY_HOST} "echo 'SSH connection OK'"
-
-          # --- deploy ---
-          rsync -avz --delete \
-            --exclude '.git*' \
-            --exclude 'node_modules' \
-            ./ \
-            ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+          ls -al .ssh
+          rsync -avz --delete --exclude '.git*' --exclude 'node_modules' ./ ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}
