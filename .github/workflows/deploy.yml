@@ -34,4 +34,5 @@ jobs:
           # Avoid host key issues in CI
           echo -e "Host *\n  StrictHostKeyChecking no" >> ~/.ssh/config
           ls -al .ssh
+          ssh -i ~/.ssh/id_ed25519 ${DEPLOY_USER}@${DEPLOY_HOST} "echo SSH OK"
           rsync -avz --delete \ --exclude '.git*' \ --exclude 'node_modules' \ ./\ ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}
