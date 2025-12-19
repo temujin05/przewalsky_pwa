@@ -3,7 +3,7 @@ name: Deploy to server
 on:
   push:
     branches:
-      - main   # Only main branch after commit
+      - main
 
 jobs:
   deploy:
@@ -28,11 +28,21 @@ jobs:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
+          set -e
+
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
+
           # Avoid host key issues in CI
           echo -e "Host *\n  StrictHostKeyChecking no" >> ~/.ssh/config
-          ls -al .ssh
+
+          ls -al ~/.ssh
+
           ssh -i ~/.ssh/id_ed25519 ${DEPLOY_USER}@${DEPLOY_HOST} "echo SSH OK"
-          rsync -avz --delete \ --exclude '.git*' \ --exclude 'node_modules' \ ./\ ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}
+
+          rsync -avz --delete \
+            --exclude '.git*' \
+            --exclude 'node_modules' \
+            ./ \
+            ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}
