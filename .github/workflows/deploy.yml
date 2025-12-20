@@ -20,7 +20,7 @@ jobs:
 
       - name: Install rsync and ssh
         run: sudo apt-get update && sudo apt-get install -y rsync openssh-client
-
+        
       - name: Upload to server via rsync
         env:
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
@@ -28,9 +28,21 @@ jobs:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
+          set -e
+
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          printf "%s\n" "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
+
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
-          ls -al .ssh
-          rsync -avz --delete --exclude '.git*' --exclude 'node_modules' ./ ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}
+
+          ls -al ~/.ssh
+
+          ssh -i ~/.ssh/id_ed25519 ${DEPLOY_USER}@${DEPLOY_HOST} "mkdir -p ${DEPLOY_PATH} && echo SSH OK"
+
+          rsync -avz \
+            --exclude '.git*' \
+            --exclude 'node_modules' \
+            ./ \
+            ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}
+
