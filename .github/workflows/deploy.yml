@@ -28,14 +28,18 @@ jobs:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
-          ls -al .ssh
+          echo "HOME is: $HOME"
+          ls -la "$HOME"
+
+          mkdir -p "$HOME/.ssh"
+
+          printf "%s\n" "$SSH_PRIVATE_KEY" > "$HOME/.ssh/id_ed25519"
+          chmod 600 "$HOME/.ssh/id_ed25519"
+
+          ssh-keyscan -H "$DEPLOY_HOST" >> "$HOME/.ssh/known_hosts"
+
           rsync -avz --delete \
             --exclude '.git*' \
             --exclude 'node_modules' \
             "$GITHUB_WORKSPACE/" \
             ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}
-
