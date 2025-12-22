@@ -29,7 +29,6 @@ jobs:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
           echo "HOME is: $HOME"
-          ls -la "$HOME" || true
 
           mkdir -p "$HOME/.ssh"
 
