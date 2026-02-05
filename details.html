@@ -63,10 +63,28 @@
         .image-gallery img:hover {
             transform: scale(1.05);
         }
+        
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #BAB86C;
+            color: black;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            transition: background-color 0.3s;
+        }
+        
+        .back-button:hover {
+            background-color: #9a9856;
+        }
     </style>
 </head>
 
 <body>
+    <div style="margin-bottom: 20px;">
+        <a href="index.html" class="back-button">&larr; Home</a>
+    </div>
     <div id="details"></div>
     <div id="gallery" class="image-gallery"></div>
 
