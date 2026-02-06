@@ -28,14 +28,11 @@ jobs:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
-          echo "GITHUB_WORKSPACE is: $GITHUB_WORKSPACE"
 
           mkdir -p "$HOME/.ssh"
-          echo 1
 
           printf "%s\n" "$SSH_PRIVATE_KEY" > "$HOME/.ssh/id_ed25519"
           chmod 600 "$HOME/.ssh/id_ed25519"
-          echo 2
 
           cat >> "$HOME/.ssh/config" <<EOF
           Host *
@@ -43,13 +40,9 @@ jobs:
             StrictHostKeyChecking yes
           EOF
           chmod 600 "$HOME/.ssh/config"
-          echo 3
 
-          echo "ssh-keyscan -H \"$DEPLOY_HOST\" >> \"$HOME/.ssh/known_hosts\""
-          echo ${#DEPLOY_HOST}
-          echo `ls $HOME/.ssh`
-          whereis ssh-keyscan
           ssh-keyscan -H "$DEPLOY_HOST" >> "$HOME/.ssh/known_hosts" || true
+          echo `ls $HOME/.ssh`
           cat $HOME/.ssh/known_hosts
           
           echo 4
