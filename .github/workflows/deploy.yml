@@ -48,6 +48,7 @@ jobs:
           echo "ssh-keyscan -H \"$DEPLOY_HOST\" >> \"$HOME/.ssh/known_hosts\""
           echo ${#DEPLOY_HOST}
           echo `ls $HOME/.ssh`
+          whereis ssh-keyscan
           ssh-keyscan -H "$DEPLOY_HOST" >> "$HOME/.ssh/known_hosts"
 
           echo 4
