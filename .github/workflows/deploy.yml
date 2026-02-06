@@ -44,6 +44,7 @@ jobs:
 
           ssh-keyscan -H "$DEPLOY_HOST" >> "$HOME/.ssh/known_hosts"
 
+          echo "GITHUB_WORKSPACE is: $GITHUB_WORKSPACE"
           rsync -avz --delete \
             --exclude '.git*' \
             --exclude 'node_modules' \
