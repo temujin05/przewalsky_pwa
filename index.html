@@ -156,7 +156,7 @@
 
         <script>
             const apiUrl = "https://vadlo.ebiok.science.unideb.hu/active_names";
-            const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(apiUrl);
+            const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(apiUrl);
 
             fetch(proxyUrl)
                 .then(res => res.json())
