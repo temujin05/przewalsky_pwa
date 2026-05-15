@@ -149,15 +149,13 @@
     <section id="search" class="section py-5">
         <div class="container">
             <h3>Names</h3>
-            <p>(the data may take at least 5 mins to be reloaded)</p>
             <input type="text" id="searchInput" placeholder="Search names..." style="width:100%; padding:8px; margin-bottom:10px;">
             <ul id="nameList" style="max-height:150px; overflow-y:auto; border:2px solid #ccc; padding:5px; list-style:none;">
             </ul>
         </div>
 
         <script>
-            const apiUrl = "https://vadlo.ebiok.science.unideb.hu/active_names";
-            const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(apiUrl);
+            const proxyUrl = "https://vadlo.ebiok.science.unideb.hu/active_names";
 
             fetch(proxyUrl)
                 .then(res => res.json())
@@ -201,6 +199,7 @@
         </style>
 
         <script>
+            /*
             document.addEventListener("DOMContentLoaded", () => {
                 fetch("https://vadlo.ebiok.science.unideb.hu/active_names")
                     .then(res => res.json())
@@ -218,7 +217,12 @@
                             }, {
                                 title: "NAME",
                                 field: "name",
-                                sorter: "string"
+                                sorter: "string",
+                                formatter: function(cell) {
+				                    const value = cell.getValue();
+				                    const encoded = encodeURIComponent(value);
+				                    return `<a href="details.html?name=${encoded}">${value}</a>`;
+				                }
                             }],
                             rowClick: function(e, row) {
                                 const rowData = row.getData();
@@ -228,7 +232,7 @@
                         });
                     })
                     .catch(err => console.error("Failed to load data:", err));
-            });
+            });*/
         </script>
     </section>
 
